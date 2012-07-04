@@ -44,4 +44,8 @@ class Bouncer
 
     }
 
+    public function addRole($name, $pages, $roles = null, $replaces = null){
+
+    }
+
 }
