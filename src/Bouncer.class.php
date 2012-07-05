@@ -29,6 +29,9 @@ require("BouncerRole.class.php");
  */
 class Bouncer
 {
+    /**
+     * @var BouncerRole[]
+     */
     private $roles;
 
     /**
@@ -62,10 +65,47 @@ class Bouncer
         return $granted;
     }
 
+    /**
+     * @param string $name
+     * @param array $pages
+     * @param array $replaces
+     */
     public function addRole($name, $pages, $replaces = null)
     {
         $role = new BouncerRole($name, $pages, $replaces);
         $this->roles[$name] = $role;
+    }
+
+    /**
+     * @param array $roleList
+     * @param string $url
+     * @param string $failPage
+     */
+    public function manageAccess($roleList, $url, $failPage)
+    {
+        // @TODO: Implement a method which will take care of all redirection upon validation failure.
+        $this->throwNotImplementedException();
+    }
+
+    /**
+     * @param string $query
+     * @param string $hostname
+     * @param string $username
+     * @param string $password
+     * @param string $schema
+     */
+    public function readRolesFromDatabase($query = "", $hostname = "", $username = "", $password = "", $schema = "")
+    {
+        // @TODO: Implement a method which allows the user to pass in a query and database credentials to add roles from the Database.
+        $this->throwNotImplementedException();
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function throwNotImplementedException()
+    {
+        throw new Exception("This method has not been implemented yet.");
     }
 
 }
