@@ -42,7 +42,6 @@ class Bouncer
         $this->roles = array();
     }
 
-
     /**
      * @param $roleList array An array of roles to check for access.
      * @param $url string The URL of the page the user is trying to access.
