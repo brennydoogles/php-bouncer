@@ -93,7 +93,7 @@ class Bouncer
      * @param string $password
      * @param string $schema
      */
-    public function readRolesFromDatabase($query = "", $hostname = "", $username = "", $password = "", $schema = "")
+    public function readRolesFromDatabase($hostname = "", $username = "", $password = "", $schema = "")
     {
         // @TODO: Implement a method which allows the user to pass in a query and database credentials to add roles from the Database.
         $this->throwNotImplementedException();
