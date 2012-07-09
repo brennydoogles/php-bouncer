@@ -1,5 +1,5 @@
 <?php
-include("../src/Bouncer.class.php");
+include("../../src/Bouncer.class.php");
 include("User.class.php");
 $bouncer = new Bouncer();
 // Add a role     Name,      Array of pages role provides

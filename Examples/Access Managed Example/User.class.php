@@ -1,5 +1,5 @@
 <?php
-include("../src/BouncerUser.class.php");
+include("../../src/BouncerUser.class.php");
 /**
  * Created with JetBrains PhpStorm.
  * User: Brendon Dugan <wishingforayer@gmail.com>
