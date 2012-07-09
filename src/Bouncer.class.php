@@ -82,8 +82,27 @@ class Bouncer
      */
     public function manageAccess($roleList, $url, $failPage = "index.php")
     {
-        // @TODO: Implement a method which will take care of all redirection upon validation failure.
-        $this->throwNotImplementedException();
+	    $granted = false;
+	    foreach ($roleList as $role) {
+		    $obj = $this->roles[$role];
+		    /** @var $obj BouncerRole */
+		    $response = $obj->verifyAccess($url);
+		    if ($response->getIsOverridden()) { // If access to the page is overridden forward the user to the overiding page
+			    $loc = ($obj->getOverridingPage($url) !== false) ? $obj->getOverridingPage($url):$failPage;
+			    $locationString = "Location: ".$loc;
+			    header($locationString);
+		    }
+		    if ($response->getIsAccessible()) { // If this particular role contains access to the page set granted to true
+			    $granted = true; // We don't return yet in case another role overrides.
+		    }
+	    }
+	    // If we are here, we know that the page has not been overridden
+	    // so let's check to see if access has been granted by any of our roles.
+	    // If not, the user doesn't have access so we'll forward them on to the failure page.
+	    if(!$granted){
+		    $locationString = "Location: ".$failPage;
+		    header($locationString);
+	    }
     }
 
     /**

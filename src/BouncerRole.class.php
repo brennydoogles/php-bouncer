@@ -97,4 +97,16 @@ class BouncerRole
         $response->setIsOverridden($isOverridden);
         return $response;
     }
+
+	/**
+	 * @param string $url
+	 *
+	 * @return string|bool
+	 */
+	public function getOverridingPage($url){
+		if(array_key_exists($url, $this->overrides)){
+			return $this->overrides[$url];
+		}
+		return false;
+	}
 }
