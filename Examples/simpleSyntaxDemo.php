@@ -27,5 +27,5 @@ $bouncer->verifyAccess($user2->getRoles(), "viewusers.php"); // True!
 
 $bouncer->verifyAccess($user3->getRoles(), "index.php"); // True!
 $bouncer->verifyAccess($user3->getRoles(), "viewusers.php"); // False! As an Admin, viewusers.php has been replaced
-// with manageusers.php
+															 // with manageusers.php
 ?>

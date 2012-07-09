@@ -80,7 +80,7 @@ class Bouncer
      * @param string $url
      * @param string $failPage
      */
-    public function manageAccess($roleList, $url, $failPage)
+    public function manageAccess($roleList, $url, $failPage = "index.php")
     {
         // @TODO: Implement a method which will take care of all redirection upon validation failure.
         $this->throwNotImplementedException();
