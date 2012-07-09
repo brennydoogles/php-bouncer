@@ -112,9 +112,43 @@ class Bouncer
      * @param string $password
      * @param string $schema
      */
-    public function readRolesFromDatabase($hostname = "", $username = "", $password = "", $schema = "")
+    public function readRolesFromDatabase($hostname = "", $username = "", $password = "", $schema = "", $dbtype = "mysql")
     {
         // @TODO: Implement a method which allows the user to pass in a query and database credentials to add roles from the Database.
+        $dsn = "";
+        $db = NULL;
+        switch($dbtype){
+            case "mysql":
+                $dsn = $dbtype.":dbname=".$schema.";host=".$hostname;
+                try{
+                    $db = new PDO($dsn, $username, $password);
+                }
+                catch(PDOException $e){
+                    echo "Error connecting to MySQL!: ".$e->getMessage();
+                    return false;
+                }
+                break;
+            case "oci":
+                $dsn = $dbtype.":host=".$hostname.";dbname=".$schema;
+                try{
+                    $db = new PDO($dsn, $username, $password);
+                }
+                catch(PDOException $e){
+                    echo "Error connecting to Oracle!: ".$e->getMessage();
+                    return false;
+                }
+                break;
+            case "sqlsrv":
+                $dsn = $dbtype.":Server=".$hostname.";Database=".$schema;
+                try{
+                    $db = new PDO($dsn, $username, $password);
+                }
+                catch(PDOException $e){
+                    echo "Error connecting to SQL Server!: ".$e->getMessage();
+                    return false;
+                }
+                break;
+        }
         $this->throwNotImplementedException();
     }
 
