@@ -115,7 +115,7 @@ class Bouncer
     public function readRolesFromDatabase($hostname = "", $username = "", $password = "", $schema = "", $dbtype = "mysql")
     {
         // @TODO: Implement a method which allows the user to pass in a query and database credentials to add roles from the Database.
-        $dsn = "";
+        $dsn = NULL;
         $db = NULL;
         switch($dbtype){
             case "mysql":
