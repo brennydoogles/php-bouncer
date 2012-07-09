@@ -148,6 +148,10 @@ class Bouncer
                     return false;
                 }
                 break;
+            default:
+                echo "I don't know that database!";
+                return false;
+
         }
         $this->throwNotImplementedException();
     }
