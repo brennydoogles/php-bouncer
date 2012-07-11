@@ -14,7 +14,7 @@
 	$user1 = new User();
 	$user2 = new User();
 	$user3 = new User();
-	// Adding a comment to force a re-commit of all files.
+
 
 	$user1->addRole("Public");
 	$user2->addRole("Registered User");

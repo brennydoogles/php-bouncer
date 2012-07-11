@@ -1,6 +1,6 @@
 <?php
 	include("../../src/BouncerUser.class.php");
-	// Adding a comment to force a re-commit of all files.
+
 	/**
 	 * Created with JetBrains PhpStorm.
 	 * User: Brendon Dugan <wishingforayer@gmail.com>

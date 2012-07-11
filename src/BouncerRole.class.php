@@ -18,7 +18,6 @@
 		 * @param array  $pages
 		 * @param array  $overrides
 		 */
-		// Adding a comment to force a re-commit of all files.
 		public function __construct($name = "", $pages = null, $overrides = null){
 			if(!empty($name) && is_array($pages)){
 				$this->name      = $name;

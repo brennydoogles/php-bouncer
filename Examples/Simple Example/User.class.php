@@ -7,7 +7,7 @@
 	 * Time: 3:58 PM
 	 *
 	 */
-	// Adding a comment to force a re-commit of all files.
+
 	class User extends BouncerUser{
 		public function __construct(){
 			// TODO: Implement Constructor for User.

@@ -19,7 +19,6 @@
 			}
 		}
 
-		// Adding a comment to force a re-commit of all files.
 
 		public function getRoles(){
 			return $this->bouncerRoles;

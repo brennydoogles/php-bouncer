@@ -16,7 +16,7 @@
 	 *     limitations under the License.
 	 *
 	 */
-// Adding a comment to force a re-commit of all files.
+
 	require("BouncerRole.class.php");
 
 	/**
