@@ -96,7 +96,7 @@
 			// so let's check to see if access has been granted by any of our roles.
 			// If not, the user doesn't have access so we'll forward them on to the failure page.
 			if(!$granted){
-				$locationString = "Location: ".$failPage."?url=".urlencode($url);
+				$locationString = "Location: ".$failPage."?url=".urlencode($url)."&roles=".urlencode(serialize($roleList));
 				header($locationString);
 			}
 		}
