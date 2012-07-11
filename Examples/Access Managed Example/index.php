@@ -6,6 +6,7 @@
 	 * Time: 11:05 AM
 	 *
 	 */
+	// Adding a comment to force a re-commit of all files.
 	include "core.php";
 ?>
 <!DOCTYPE HTML>
