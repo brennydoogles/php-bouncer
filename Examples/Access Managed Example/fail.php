@@ -6,5 +6,7 @@
 </head>
 <body>
 <p>It seems we have a problem.</p>
+
+<p>URL = <?php echo urldecode($_GET["url"]); ?></p>
 </body>
 </html>
