@@ -82,7 +82,7 @@
 			foreach($roleList as $role){
 				$obj = $this->roles[$role];
 				/** @var $obj BouncerRole */
-				$response = $obj->verifyAccess($url);
+				$response = $obj->verifyAccess("/".$url);
 				if($response->getIsOverridden()){ // If access to the page is overridden forward the user to the overiding page
 					$loc            = ($obj->getOverridingPage($url) !== false) ? $obj->getOverridingPage($url) : $failPage;
 					$locationString = "Location: ".$loc;
@@ -96,7 +96,7 @@
 			// so let's check to see if access has been granted by any of our roles.
 			// If not, the user doesn't have access so we'll forward them on to the failure page.
 			if(!$granted){
-				$locationString = "Location: ".$failPage;
+				$locationString = "Location: ".$failPage."?";
 				header($locationString);
 			}
 		}
