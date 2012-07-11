@@ -10,6 +10,6 @@
 	 */
 	class User extends BouncerUser{
 		public function __construct(){
-			// TODO: Implement Constructor for User.
+			parent::__construct();
 		}
 	}
