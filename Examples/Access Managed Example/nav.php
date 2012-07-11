@@ -16,7 +16,7 @@
 <ul>
 	<li><a href="editaccount.php">Edit Account</a></li>
 	<li><a href="myaccount.php">My Account</a></li>
-	<li><a href="viewusers.php">View Users</a></li>
+	<li><a href="viewusers.php">View Users (If Admin, this link will take you to ManageUsers)</a></li>
 </ul>
 <p>Admin Pages:</p>
 <ul>
