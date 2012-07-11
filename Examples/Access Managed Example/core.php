@@ -1,10 +1,10 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: Brendon Dugan <wishingforayer@gmail.com>
- * Date: 7/9/12
- * Time: 5:28 PM
- */
+	/**
+	 * Created by JetBrains PhpStorm.
+	 * User: Brendon Dugan <wishingforayer@gmail.com>
+	 * Date: 7/9/12
+	 * Time: 5:28 PM
+	 */
 	include("../../src/Bouncer.class.php");
 	include("User.class.php");
 	$bouncer = new Bouncer();
@@ -17,10 +17,21 @@
 
 // Here we add some users. The user class here extends the BouncerUser class, so it can still do whatever you
 // would normally create a user class to do..
-	$user1 = new User();
-	$user2 = new User();
-	$user3 = new User();
+	$publicUser         = new User();
+	$registeredUser     = new User();
+	$adminUser          = new User();
+	$registeredAndAdmin = new User();
 
-	$user1->addRole("Public");
-	$user2->addRole("Registered User");
-	$user3->addRole("Admin");
+	$publicUser->addRole("Public");
+
+	$registeredUser->addRole("Public"); // We add the public group to all users since they need it to see index.php
+	$registeredUser->addRole("Registered User");
+
+	$adminUser->addRole("Public"); // We add the public group to all users since they need it to see index.php
+	$adminUser->addRole("Admin");
+
+	$registeredAndAdmin->addRole("Public"); // We add the public group to all users since they need it to see index.php
+	$registeredAndAdmin->addRole("Registered User");
+	$registeredAndAdmin->addRole("Admin");
+
+	$bouncer->manageAccess("/".$publicUser->getRoles(), $_SERVER["PHP_SELF"]);
