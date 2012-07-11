@@ -6,9 +6,6 @@
 	 * Time: 3:13 PM
 	 *
 	 */
-	if(isset($level)){
-		echo "You have $level Permissions";
-	}
 ?>
 <p>Public Pages:</p>
 <ul>
