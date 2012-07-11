@@ -35,4 +35,10 @@
 	$registeredAndAdmin->addRole("Registered User");
 	$registeredAndAdmin->addRole("Admin");
 
-	$bouncer->manageAccess($publicUser->getRoles(), substr($_SERVER["PHP_SELF"], 1), "fail.php");
+	//$bouncer->manageAccess($publicUser->getRoles(), substr($_SERVER["PHP_SELF"], 1), "fail.php");
+	if($bouncer->verifyAccess($publicUser->getRoles(), substr($_SERVER["PHP_SELF"], 1))){
+		echo "We have access";
+	}
+	else{
+		echo "Fail";
+	}
