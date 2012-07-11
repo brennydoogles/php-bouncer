@@ -19,5 +19,6 @@
 <h1>Welcome to index.php!</h1>
 
 <p>The user you are operating as must have "Public" access!</p>
+<?php include("nav.php"); ?>
 </body>
 </html>

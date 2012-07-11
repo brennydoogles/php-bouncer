@@ -18,5 +18,6 @@
 <h1>Welcome to about.php!</h1>
 
 <p>The user you are operating as must have "Public" access!</p>
+<?php include("nav.php"); ?>
 </body>
 </html>
