@@ -36,4 +36,5 @@
 	$registeredAndAdmin->addRole("Admin");
 
 	$bouncer->manageAccess($registeredUser->getRoles(), substr($_SERVER["PHP_SELF"], 1), "fail.php");
+	global $level;
 	$level = "Registered User";
