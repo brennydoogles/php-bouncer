@@ -80,7 +80,7 @@
 		/**
 		 * @param string $url
 		 *
-		 * @returns BouncerAccessResponse
+		 * @return BouncerAccessResponse
 		 */
 		public function verifyAccess($url){
 			$isOverridden = array_key_exists($url, $this->overrides);

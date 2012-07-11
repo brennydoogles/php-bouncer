@@ -1,5 +1,6 @@
 <?php
-	include("../../src/BouncerUser.class.php");
+	include("BouncerUser.class.php");
+
 	/**
 	 * Created with JetBrains PhpStorm.
 	 * User: Brendon Dugan <wishingforayer@gmail.com>
@@ -7,7 +8,6 @@
 	 * Time: 3:58 PM
 	 *
 	 */
-
 	class User extends BouncerUser{
 		public function __construct(){
 			// TODO: Implement Constructor for User.

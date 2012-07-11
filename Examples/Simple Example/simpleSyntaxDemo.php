@@ -1,6 +1,6 @@
 <?php
 	include("../../src/Bouncer.class.php");
-	include("User.class.php");
+	include("../../src/User.class.php");
 	$bouncer = new Bouncer();
 // Add a role     Name,      Array of pages role provides
 	$bouncer->addRole("Public", array("index.php", "about.php"));
@@ -28,5 +28,4 @@
 
 	$bouncer->verifyAccess($user3->getRoles(), "index.php"); // True!
 	$bouncer->verifyAccess($user3->getRoles(), "viewusers.php"); // False! As an Admin, viewusers.php has been replaced
-	// with manageusers.php
-?>
+// with manageusers.php

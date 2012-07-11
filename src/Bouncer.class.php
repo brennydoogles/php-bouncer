@@ -44,7 +44,7 @@
 		 * @param $roleList array An array of roles to check for access.
 		 * @param $url      string The URL of the page the user is trying to access.
 		 *
-		 * @returns $granted bool A Boolean value reflecting whether or not the user is allowed to access $url.
+		 * @return bool $granted A Boolean value reflecting whether or not the user is allowed to access $url.
 		 */
 		public function verifyAccess($roleList, $url){
 			$granted = false;
@@ -83,7 +83,7 @@
 				$obj = $this->roles[$role];
 				/** @var $obj BouncerRole */
 				$response = $obj->verifyAccess($url);
-				if($response->getIsOverridden()){ // If access to the page is overridden forward the user to the overiding page
+				if($response->getIsOverridden()){ // If access to the page is overridden forward the user to the overriding page
 					$loc            = ($obj->getOverridingPage($url) !== false) ? $obj->getOverridingPage($url) : $failPage;
 					$locationString = "Location: ".$loc;
 					header($locationString);
@@ -102,11 +102,16 @@
 		}
 
 		/**
-		 * @param string $query
 		 * @param string $hostname
 		 * @param string $username
 		 * @param string $password
 		 * @param string $schema
+		 *
+		 * @param string $dbtype
+		 *
+		 * @throws Exception
+		 * @internal param string $query
+		 * @return boolean
 		 */
 		public function readRolesFromDatabase($hostname = "", $username = "", $password = "", $schema = "", $dbtype = "mysql"){
 			$dsn = NULL;

@@ -7,7 +7,7 @@
 	 */
 
 	include("../../src/Bouncer.class.php");
-	include("User.class.php");
+	include("../../src/User.class.php");
 	$bouncer = new Bouncer();
 // Add a role     Name,      Array of pages role provides
 	$bouncer->addRole("Public", array("index.php", "about.php"));
