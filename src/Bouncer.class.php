@@ -101,6 +101,56 @@
 			}
 		}
 
+		/**
+		 * @param string $hostname
+		 * @param string $username
+		 * @param string $password
+		 * @param string $schema
+		 *
+		 * @param string $dbtype
+		 *
+		 * @throws Exception
+		 * @internal param string $query
+		 * @return boolean
+		 */
+		public function readRolesFromDatabase($hostname = "", $username = "", $password = "", $schema = "", $dbtype = "mysql"){
+			$dsn = NULL;
+			$db  = NULL;
+			switch($dbtype){
+				case "mysql":
+					$dsn = $dbtype.":dbname=".$schema.";host=".$hostname;
+					try{
+						$db = new PDO($dsn, $username, $password);
+					}
+					catch(PDOException $e){
+						throw new Exception("Error connecting to MySQL!: ".$e->getMessage());
+					}
+					break;
+				case "oci":
+					$dsn = $dbtype.":host=".$hostname.";dbname=".$schema;
+					try{
+						$db = new PDO($dsn, $username, $password);
+					}
+					catch(PDOException $e){
+						throw new Exception("Error connecting to Oracle!: ".$e->getMessage());
+					}
+					break;
+				case "sqlsrv":
+					$dsn = $dbtype.":Server=".$hostname.";Database=".$schema;
+					try{
+						$db = new PDO($dsn, $username, $password);
+					}
+					catch(PDOException $e){
+						throw new Exception("Error connecting to SQL Server!: ".$e->getMessage());
+					}
+					break;
+				default:
+					throw new Exception("I don't know that database!");
+
+			}
+			return true;
+		}
+
 
 		/**
 		 * @throws Exception
