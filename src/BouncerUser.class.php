@@ -1,26 +1,48 @@
 <?php
+/**
+ * Created with JetBrains PhpStorm.
+ * User: Brendon Dugan <wishingforayer@gmail.com>
+ * Date: 7/4/12
+ * Time: 3:04 PM
+ *
+ */
+class BouncerUser
+{
 	/**
-	 * Created with JetBrains PhpStorm.
-	 * User: Brendon Dugan <wishingforayer@gmail.com>
-	 * Date: 7/4/12
-	 * Time: 3:04 PM
+	 * @var array
+	 */
+	private $bouncerRoles;
+
+	/**
 	 *
 	 */
-	class BouncerUser{
-		private $bouncerRoles;
+	public function __construct()
+    {
+        $this->bouncerRoles = array();
+    }
 
-		public function __construct(){
-			$this->bouncerRoles = array();
-		}
+	/**
+	 * @param $name
+	 */
+	public function addRole($name)
+    {
+        if (array_search($name, $this->bouncerRoles) === false && is_string($name)) {
+            array_push($this->bouncerRoles, $name);
+        }
+    }
 
-		public function addRole($name){
-			if(array_search($name, $this->bouncerRoles) === false && is_string($name)){
-				array_push($this->bouncerRoles, $name);
-			}
-		}
+	/**
+	 * @return array
+	 */
+	public function getRoles()
+    {
+        return $this->bouncerRoles;
+    }
 
-
-		public function getRoles(){
-			return $this->bouncerRoles;
-		}
+	/**
+	 * @param string $role
+	 */
+	public function hasRole($role){
+		return (array_search($role, $this->bouncerRoles) !== false);
 	}
+}
