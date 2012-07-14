@@ -121,6 +121,12 @@
 					$dsn = $dbtype.":dbname=".$schema.";host=".$hostname;
 					try{
 						$db = new PDO($dsn, $username, $password);
+						$query = "select BouncerRoles.RoleID, BouncerRoles.RoleName,
+									GROUP_CONCAT(PageInRole.PageName separator '|') as ProvidedPages,
+									GROUP_CONCAT(distinct CONCAT(BouncerPageOverrides.OverriddenPage,'&',BouncerPageOverrides.OverridingPage) separator '|') as OverriddenPages
+									from BouncerRoles join PageInRole on BouncerRoles.RoleID = PageInRole.RoleID
+									join BouncerPageOverrides on BouncerRoles.RoleID = BouncerPageOverrides.RoleID
+									group by BouncerRoles.RoleID;";
 					}
 					catch(PDOException $e){
 						throw new Exception("Error connecting to MySQL!: ".$e->getMessage());
