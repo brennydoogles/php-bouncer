@@ -118,19 +118,34 @@
 			$db  = NULL;
 			switch($dbtype){
 				case "mysql":
+                    // $dsn is the Data Source Name that contains info required to connect to the database
 					$dsn = $dbtype.":dbname=".$schema.";host=".$hostname;
 					try{
+                        // we put our actual connect attempt in a try block
 						$db = new PDO($dsn, $username, $password);
-						$query = "select BouncerRoles.RoleID, BouncerRoles.RoleName,
+					}
+					catch(PDOException $e){
+                        // throw an exception if we don't connect
+						throw new Exception("Error connecting to MySQL!: ".$e->getMessage());
+					}
+
+                    // here we prepare a statement for execution.  PDO::prepare() returns a PDOStatement object
+                    $query = $db->prepare("select BouncerRoles.RoleID, BouncerRoles.RoleName,
 									GROUP_CONCAT(PageInRole.PageName separator '|') as ProvidedPages,
 									GROUP_CONCAT(distinct CONCAT(BouncerPageOverrides.OverriddenPage,'&',BouncerPageOverrides.OverridingPage) separator '|') as OverriddenPages
 									from BouncerRoles join PageInRole on BouncerRoles.RoleID = PageInRole.RoleID
 									join BouncerPageOverrides on BouncerRoles.RoleID = BouncerPageOverrides.RoleID
-									group by BouncerRoles.RoleID;";
-					}
-					catch(PDOException $e){
-						throw new Exception("Error connecting to MySQL!: ".$e->getMessage());
-					}
+									group by BouncerRoles.RoleID") ;
+                    // we need an array to hold the results of the executed statement
+                    $roles = array();
+                    // PDOStatement::execute() returns T/F, so we can use it in an if statement
+                    if($query->execute()){
+                        // PDOStatement::fetch() returns false when there are no more rows to return.  In this case,
+                        //      we are fetching results as an associative array, indexes are column names
+                        while ($row = $query->fetch(PDO::FETCH_ASSOC)){
+                            $roles[] = $row;
+                        }
+                    }
 					break;
 				case "oci":
 					$dsn = $dbtype.":host=".$hostname.";dbname=".$schema;
