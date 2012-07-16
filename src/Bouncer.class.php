@@ -184,6 +184,10 @@
 			return true;
 		}
 
+
+		/**
+		 * @return array
+		 */
 		public function getRoleList(){
 			$roleNames = array();
 			foreach ($this->roles as $role) {
