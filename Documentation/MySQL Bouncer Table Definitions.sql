@@ -25,3 +25,25 @@ CREATE TABLE BouncerRoles (
   RoleName varchar(45) COLLATE utf8_unicode_ci NOT NULL,
   PRIMARY KEY (RoleID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+delimiter $$
+create procedure GetBouncerRoles()
+begin
+  select BouncerRoles.RoleID,
+    BouncerRoles.RoleName,
+    GROUP_CONCAT(PageInRole.PageName separator '|') as ProvidedPages,
+    ifnull(
+      GROUP_CONCAT(
+        distinct CONCAT(
+          BouncerPageOverrides.OverriddenPage,'&',BouncerPageOverrides.OverridingPage
+        ) separator '|'
+      ), ''
+    ) as OverriddenPages
+    from BouncerRoles join PageInRole
+      on BouncerRoles.RoleID = PageInRole.RoleID
+    left outer join BouncerPageOverrides
+      on BouncerRoles.RoleID = BouncerPageOverrides.RoleID
+  group by BouncerRoles.RoleID;
+end $$
+delimiter ;
