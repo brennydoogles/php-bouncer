@@ -184,6 +184,14 @@
 			return true;
 		}
 
+		public function getRoleList(){
+			$roleNames = array();
+			foreach ($this->roles as $role) {
+				array_push($roleNames, $role->getName());
+			}
+			return $roleNames;
+		}
+
 
 		/**
 		 * @throws Exception
