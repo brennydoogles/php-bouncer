@@ -41,6 +41,7 @@ class BouncerUser
 
 	/**
 	 * @param string $role
+	 * @return bool
 	 */
 	public function hasRole($role){
 		return (array_search($role, $this->bouncerRoles) !== false);
