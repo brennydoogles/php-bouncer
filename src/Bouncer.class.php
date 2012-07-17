@@ -80,18 +80,21 @@
 		public function manageAccess($roleList, $url, $failPage = "index.php"){
 			$granted = false;
 			foreach($roleList as $role){
-				if(array_key_exists($role, $this->roles)){
-					$obj = $this->roles[$role];
-					/** @var $obj BouncerRole */
-					$response = $obj->verifyAccess($url);
-					if($response->getIsOverridden()){ // If access to the page is overridden forward the user to the overriding page
+				$obj = $this->roles[$role];
+				/** @var $obj BouncerRole */
+				$response = $obj->verifyAccess($url);
+				if($response->getIsOverridden()){ // If access to the page is overridden forward the user to the overriding page
+					if($this->verifyAccess($roleList, $obj->getOverridingPage($url))){
 						$loc            = ($obj->getOverridingPage($url) !== false) ? $obj->getOverridingPage($url) : $failPage;
 						$locationString = "Location: ".$loc;
 						header($locationString);
 					}
-					if($response->getIsAccessible()){ // If this particular role contains access to the page set granted to true
-						$granted = true; // We don't return yet in case another role overrides.
-					}
+					$loc            = $failPage;
+					$locationString = "Location: ".$loc;
+					header($locationString);
+				}
+				if($response->getIsAccessible()){ // If this particular role contains access to the page set granted to true
+					$granted = true; // We don't return yet in case another role overrides.
 				}
 			}
 			// If we are here, we know that the page has not been overridden
@@ -118,17 +121,13 @@
 		public function readRolesFromDatabase($hostname = "", $username = "", $password = "", $schema = "", $dbtype = "mysql"){
 			$dsn = NULL;
 			$db  = NULL;
-			/* @var $db PDO **/
 			switch($dbtype){
 				case "mysql":
-                    // $dsn is the Data Source Name that contains info required to connect to the database
 					$dsn = $dbtype.":dbname=".$schema.";host=".$hostname;
 					try{
-                        // we put our actual connect attempt in a try block
 						$db = new PDO($dsn, $username, $password);
 					}
 					catch(PDOException $e){
-                        // throw an exception if we don't connect
 						throw new Exception("Error connecting to MySQL!: ".$e->getMessage());
 					}
 					break;
@@ -152,50 +151,9 @@
 					break;
 				default:
 					throw new Exception("I don't know that database!");
-					break;
-			}
-			// here we prepare a statement for execution.  PDO::prepare() returns a PDOStatement object
-			$query = $db->prepare("call GetBouncerRoles()");
-			// PDOStatement::execute() returns T/F, so we can use it in an if statement
-			/* @var $query PDOStatement **/
-			if($query->execute()){
-				// PDOStatement::fetch() returns false when there are no more rows to return.  In this case,
-				//      we are fetching results as an associative array, indexes are column names
-				while ($row = $query->fetch(PDO::FETCH_ASSOC)){
-					$name = $row["RoleName"];
-					$pages = explode("|", $row["ProvidedPages"]);
-					$overrides = array();
-					$overridesArray = explode("|", $row["OverriddenPages"]);
-					foreach($overridesArray as $item){
-						$temp = explode("&", $item);
-						if(!empty($temp)){
-							$overrides[$temp[0]] = $temp[1];
-						}
-					}
-					if(!empty($overrides)){
-						$this->addRole($name, $pages, $overrides);
-					}
-					else{
-						$this->addRole($name, $pages);
-					}
-				}
-			}
-			else{
-				return false; // The query failed, return false.
+
 			}
 			return true;
-		}
-
-
-		/**
-		 * @return array
-		 */
-		public function getRoleList(){
-			$roleNames = array();
-			foreach ($this->roles as $role) {
-				array_push($roleNames, $role->getName());
-			}
-			return $roleNames;
 		}
 
 
