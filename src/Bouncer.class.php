@@ -168,7 +168,9 @@
 					$overridesArray = explode("|", $row["OverriddenPages"]);
 					foreach($overridesArray as $item){
 						$temp = explode("&", $item);
-						$overrides[$temp[0]] = $temp[1];
+						if(!empty($temp)){
+							$overrides[$temp[0]] = $temp[1];
+						}
 					}
 					if(!empty($overrides)){
 						$this->addRole($name, $pages, $overrides);
