@@ -80,17 +80,19 @@
 		public function manageAccess($roleList, $url, $failPage = "index.php"){
 			$granted = false;
 			foreach($roleList as $role){
-				$obj = $this->roles[$role];
-				/** @var $obj BouncerRole */
-				$response = $obj->verifyAccess($url);
-				if($response->getIsOverridden()){ // If access to the page is overridden forward the user to the overriding page
-					$loc            = ($obj->getOverridingPage($url) !== false) ? $obj->getOverridingPage($url) : $failPage;
-					$locationString = "Location: ".$loc;
-					header($locationString);
-					// I broke something in the last commit, perhaps this comment will help?
-				}
-				if($response->getIsAccessible()){ // If this particular role contains access to the page set granted to true
-					$granted = true; // We don't return yet in case another role overrides.
+				if(array_key_exists($role, $this->roles)){
+					$obj = $this->roles[$role];
+					/** @var $obj BouncerRole */
+					$response = $obj->verifyAccess($url);
+					if($response->getIsOverridden()){ // If access to the page is overridden forward the user to the overriding page
+						$loc            = ($obj->getOverridingPage($url) !== false) ? $obj->getOverridingPage($url) : $failPage;
+						$locationString = "Location: ".$loc;
+						header($locationString);
+						// I broke something in the last commit, perhaps this comment will help?
+					}
+					if($response->getIsAccessible()){ // If this particular role contains access to the page set granted to true
+						$granted = true; // We don't return yet in case another role overrides.
+					}
 				}
 			}
 			// If we are here, we know that the page has not been overridden
