@@ -84,14 +84,10 @@
 				/** @var $obj BouncerRole */
 				$response = $obj->verifyAccess($url);
 				if($response->getIsOverridden()){ // If access to the page is overridden forward the user to the overriding page
-					if($this->verifyAccess($roleList, $obj->getOverridingPage($url))){
-						$loc            = ($obj->getOverridingPage($url) !== false) ? $obj->getOverridingPage($url) : $failPage;
-						$locationString = "Location: ".$loc;
-						header($locationString);
-					}
-					$loc            = $failPage;
+					$loc            = ($obj->getOverridingPage($url) !== false) ? $obj->getOverridingPage($url) : $failPage;
 					$locationString = "Location: ".$loc;
 					header($locationString);
+					// I broke something in the last commit, perhaps this comment will help?
 				}
 				if($response->getIsAccessible()){ // If this particular role contains access to the page set granted to true
 					$granted = true; // We don't return yet in case another role overrides.
