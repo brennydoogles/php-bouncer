@@ -119,13 +119,17 @@
 		public function readRolesFromDatabase($hostname = "", $username = "", $password = "", $schema = "", $dbtype = "mysql"){
 			$dsn = NULL;
 			$db  = NULL;
+			/* @var $db PDO **/
 			switch($dbtype){
 				case "mysql":
+					// $dsn is the Data Source Name that contains info required to connect to the database
 					$dsn = $dbtype.":dbname=".$schema.";host=".$hostname;
 					try{
+						// we put our actual connect attempt in a try block
 						$db = new PDO($dsn, $username, $password);
 					}
 					catch(PDOException $e){
+						// throw an exception if we don't connect
 						throw new Exception("Error connecting to MySQL!: ".$e->getMessage());
 					}
 					break;
@@ -149,7 +153,36 @@
 					break;
 				default:
 					throw new Exception("I don't know that database!");
-
+					break;
+			}
+			// here we prepare a statement for execution.  PDO::prepare() returns a PDOStatement object
+			$query = $db->prepare("call GetBouncerRoles()");
+			// PDOStatement::execute() returns T/F, so we can use it in an if statement
+			/* @var $query PDOStatement **/
+			if($query->execute()){
+				// PDOStatement::fetch() returns false when there are no more rows to return.  In this case,
+				//      we are fetching results as an associative array, indexes are column names
+				while ($row = $query->fetch(PDO::FETCH_ASSOC)){
+					$name = $row["RoleName"];
+					$pages = explode("|", $row["ProvidedPages"]);
+					$overrides = array();
+					$overridesArray = explode("|", $row["OverriddenPages"]);
+					foreach($overridesArray as $item){
+						if(!empty($item)){
+							$temp = explode("&", $item);
+							$overrides[$temp[0]] = $temp[1];
+						}
+					}
+					if(!empty($overrides)){
+						$this->addRole($name, $pages, $overrides);
+					}
+					else{
+						$this->addRole($name, $pages);
+					}
+				}
+			}
+			else{
+				return false; // The query failed, return false.
 			}
 			return true;
 		}
