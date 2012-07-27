@@ -10,7 +10,7 @@
 	include("../Shared Classes/User.class.php");
 	$bouncer = new Bouncer();
 // Add a role     Name,      Array of pages role provides
-	$bouncer->addRole("Public", array("index.php", "about.php"));
+	$bouncer->addRole("Public", array("index.php", "about.php", "fail.php"));
 // Add a role          Name,              Array of pages role provides
 	$bouncer->addRole("Registered User", array("myaccount.php", "editaccount.php", "viewusers.php"));
 // Add a role          Name,   Array of pages role provides       List of pages that are overridden by other pages

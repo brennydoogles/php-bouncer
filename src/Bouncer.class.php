@@ -88,7 +88,7 @@
 						$loc            = ($obj->getOverridingPage($url) !== false) ? $obj->getOverridingPage($url) : $failPage;
 						$locationString = "Location: ".$loc;
 						header($locationString);
-						// I broke something in the last commit, perhaps this comment will help?
+						exit(); // Exit the script to force immediate redirect.
 					}
 					if($response->getIsAccessible()){ // If this particular role contains access to the page set granted to true
 						$granted = true; // We don't return yet in case another role overrides.
@@ -101,6 +101,7 @@
 			if(!$granted){
 				$locationString = "Location: ".$failPage."?url=".urlencode($url)."&roles=".urlencode(serialize($roleList));
 				header($locationString);
+				exit(); // Exit the script to force immediate redirect.
 			}
 		}
 
@@ -163,25 +164,30 @@
 				// PDOStatement::fetch() returns false when there are no more rows to return.  In this case,
 				//      we are fetching results as an associative array, indexes are column names
 				while ($row = $query->fetch(PDO::FETCH_ASSOC)){
-					$name = $row["RoleName"];
-					$pages = explode("|", $row["ProvidedPages"]);
-					$overrides = array();
-					$overridesArray = explode("|", $row["OverriddenPages"]);
-					foreach($overridesArray as $item){
-						if(!empty($item)){
-							$temp = explode("&", $item);
-							$overrides[$temp[0]] = $temp[1];
+					try {
+						$name           = $row["RoleName"];
+						$pages          = explode("|", $row["ProvidedPages"]);
+						$overrides      = array();
+						$overridesArray = explode("|", $row["OverriddenPages"]);
+						foreach ($overridesArray as $item) {
+							if (!empty($item)) {
+								$temp                = explode("&", $item);
+								$overrides[$temp[0]] = $temp[1];
+							}
 						}
-					}
-					if(!empty($overrides)){
-						$this->addRole($name, $pages, $overrides);
-					}
-					else{
-						$this->addRole($name, $pages);
+						if (!empty($overrides)) {
+							$this->addRole($name, $pages, $overrides);
+						}
+						else {
+							$this->addRole($name, $pages);
+						}
+					} catch (Exception $e) {
+
 					}
 				}
 			}
 			else{
+				throw new ErrorException("An error has occurred while attempting to fetch your roles.");
 				return false; // The query failed, return false.
 			}
 			return true;
