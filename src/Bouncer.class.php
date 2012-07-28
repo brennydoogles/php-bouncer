@@ -18,6 +18,7 @@
 	 */
 
 	require("BouncerRole.class.php");
+	require("BouncerProtectionMethod.class.php");
 
 	/**
 	 * Created with JetBrains PhpStorm.
@@ -29,15 +30,24 @@
 	 */
 	class Bouncer{
 		/**
-		 * @var BouncerRole[]
+		 * @var $roles BouncerRole[]
 		 */
 		private $roles;
+		/** @var @var $redirectProtectionMethod int */
+		private $redirectProtectionMethod;
+		/** @var @var $redirectProtectionVar String */
+		private $redirectProtectionVar;
+		/** @var @var $maxRedirectsBeforeProtection int */
+		private $maxRedirectsBeforeProtection;
 
 		/**
 		 *
 		 */
 		public function __construct(){
-			$this->roles = array();
+			$this->roles                        = array();
+			$this->redirectProtectionMethod     = BouncerProtectionMethod::Session;
+			$this->redirectProtectionVar        = "BouncerRedirectCount";
+			$this->maxRedirectsBeforeProtection = 3;
 		}
 
 		/**
@@ -72,6 +82,55 @@
 			$this->roles[$name] = $role;
 		}
 
+
+		/**
+		 * @param string $url
+		 * @param array  $params
+		 */
+		private function redirect($url, $params = array()){
+			$redirects = $this->getRedirectCount();
+
+			// Check if too many redirects have occurred
+			if($redirects >= $this->maxRedirectsBeforeProtection){
+				die("Severe Error: Misconfigured roles - Maximum number of redirects reached\n");
+			}
+
+			// If we get here, we can redirect the user, just add 1 to the redirect count
+			$redirects += 1;
+			if($this->redirectProtectionMethod == BouncerProtectionMethod::Session){
+				$_SESSION[$this->redirectProtectionVar] = $redirects;
+			}
+			if($this->redirectProtectionMethod == BouncerProtectionMethod::Get){
+				$params[$this->redirectProtectionVar] = $redirects;
+			}
+
+			$query_string   = http_build_query($params);
+			$locationString = "Location: ".$url.(!empty($query_string) ? ('?'.$query_string) : '');
+			header($locationString);
+			exit(); // Probably also want to kill the script here
+		}
+
+		/**
+		 * @return int
+		 */
+		private function getRedirectCount(){
+			if($this->redirectProtectionMethod == BouncerProtectionMethod::None){
+				return 0; // Redirect protection is off, always return 0.
+			}
+			if($this->redirectProtectionMethod == BouncerProtectionMethod::Session){
+				if(!isset($_SESSION[$this->redirectProtectionVar])){
+					$_SESSION[$this->redirectProtectionVar] = 0;
+				}
+				return $_SESSION[$this->redirectProtectionVar];
+			}
+			else{
+				if(!isset($_GET[$this->redirectProtectionVar])){
+					return 0;
+				}
+				return $_GET[$this->redirectProtectionVar];
+			}
+		}
+
 		/**
 		 * @param array  $roleList
 		 * @param string $url
@@ -85,10 +144,8 @@
 					/** @var $obj BouncerRole */
 					$response = $obj->verifyAccess($url);
 					if($response->getIsOverridden()){ // If access to the page is overridden forward the user to the overriding page
-						$loc            = ($obj->getOverridingPage($url) !== false) ? $obj->getOverridingPage($url) : $failPage;
-						$locationString = "Location: ".$loc;
-						header($locationString);
-						exit(); // Exit the script to force immediate redirect.
+						$loc = ($obj->getOverridingPage($url) !== false) ? $obj->getOverridingPage($url) : $failPage;
+						$this->redirect($loc, array());
 					}
 					if($response->getIsAccessible()){ // If this particular role contains access to the page set granted to true
 						$granted = true; // We don't return yet in case another role overrides.
@@ -99,9 +156,7 @@
 			// so let's check to see if access has been granted by any of our roles.
 			// If not, the user doesn't have access so we'll forward them on to the failure page.
 			if(!$granted){
-				$locationString = "Location: ".$failPage."?url=".urlencode($url)."&roles=".urlencode(serialize($roleList));
-				header($locationString);
-				exit(); // Exit the script to force immediate redirect.
+				$this->redirect($failPage, array("roles" => $roleList, "url" => $url));
 			}
 		}
 
@@ -163,32 +218,33 @@
 			if($query->execute()){
 				// PDOStatement::fetch() returns false when there are no more rows to return.  In this case,
 				//      we are fetching results as an associative array, indexes are column names
-				while ($row = $query->fetch(PDO::FETCH_ASSOC)){
-					try {
+				while($row = $query->fetch(PDO::FETCH_ASSOC)){
+					try{
 						$name           = $row["RoleName"];
 						$pages          = explode("|", $row["ProvidedPages"]);
 						$overrides      = array();
 						$overridesArray = explode("|", $row["OverriddenPages"]);
-						foreach ($overridesArray as $item) {
-							if (!empty($item)) {
+						foreach($overridesArray as $item){
+							if(!empty($item)){
 								$temp                = explode("&", $item);
 								$overrides[$temp[0]] = $temp[1];
 							}
 						}
-						if (!empty($overrides)) {
+						if(!empty($overrides)){
 							$this->addRole($name, $pages, $overrides);
 						}
-						else {
+						else{
 							$this->addRole($name, $pages);
 						}
-					} catch (Exception $e) {
+					}
+					catch(Exception $e){
 
 					}
 				}
 			}
 			else{
+				// The query failed, Throw an error and let the programmer handle it however they want.
 				throw new ErrorException("An error has occurred while attempting to fetch your roles.");
-				return false; // The query failed, return false.
 			}
 			return true;
 		}
@@ -199,6 +255,46 @@
 		 */
 		private function throwNotImplementedException(){
 			throw new Exception("This method has not been implemented yet.");
+		}
+
+		/**
+		 * @param  $maxRedirectsBeforeProtection int
+		 */
+		public function setMaxRedirectsBeforeProtection($maxRedirectsBeforeProtection){
+			$this->maxRedirectsBeforeProtection = $maxRedirectsBeforeProtection;
+		}
+
+		/**
+		 * @param  $redirectProtectionMethod int
+		 */
+		public function setRedirectProtectionMethod($redirectProtectionMethod){
+			if($redirectProtectionMethod == BouncerProtectionMethod::Session){
+				$this->redirectProtectionMethod = BouncerProtectionMethod::Session;
+				return true;
+			}
+			if($redirectProtectionMethod == BouncerProtectionMethod::Get){
+				$this->redirectProtectionMethod = BouncerProtectionMethod::Get;
+				return true;
+			}
+			if($redirectProtectionMethod == BouncerProtectionMethod::None){
+				$this->redirectProtectionMethod = BouncerProtectionMethod::None;
+				return true;
+			}
+			return false;
+		}
+
+		/**
+		 * @param  $redirectProtectionVar string
+		 */
+		public function setRedirectProtectionVar($redirectProtectionVar){
+			$this->redirectProtectionVar = $redirectProtectionVar;
+		}
+
+		/**
+		 * @return string
+		 */
+		public function getRedirectProtectionVar(){
+			return $this->redirectProtectionVar;
 		}
 
 	}
