@@ -92,6 +92,9 @@
 
 			// Check if too many redirects have occurred
 			if($redirects >= $this->maxRedirectsBeforeProtection){
+				if($this->redirectProtectionMethod == BouncerProtectionMethod::Session){
+					$_SESSION[$this->redirectProtectionVar] = 0;
+				}
 				die("Severe Error: Misconfigured roles - Maximum number of redirects reached\n");
 			}
 
@@ -157,6 +160,11 @@
 			// If not, the user doesn't have access so we'll forward them on to the failure page.
 			if(!$granted){
 				$this->redirect($failPage, array("roles" => $roleList, "url" => $url));
+			}
+			else{
+				if($this->redirectProtectionMethod == BouncerProtectionMethod::Session){
+					$_SESSION[$this->redirectProtectionVar] = 0;
+				}
 			}
 		}
 
