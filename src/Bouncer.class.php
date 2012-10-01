@@ -32,13 +32,13 @@
 		/**
 		 * @var $roles BouncerRole[]
 		 */
-		private $roles;
-		/** @var @var $redirectProtectionMethod int */
-		private $redirectProtectionMethod;
-		/** @var @var $redirectProtectionVar String */
-		private $redirectProtectionVar;
-		/** @var @var $maxRedirectsBeforeProtection int */
-		private $maxRedirectsBeforeProtection;
+		protected $roles;
+		/** @var $redirectProtectionMethod int */
+		protected $redirectProtectionMethod;
+		/** @var $redirectProtectionVar String */
+		protected $redirectProtectionVar;
+		/** @var $maxRedirectsBeforeProtection int */
+		protected $maxRedirectsBeforeProtection;
 
 		/**
 		 *
@@ -87,7 +87,7 @@
 		 * @param string $url
 		 * @param array  $params
 		 */
-		private function redirect($url, $params = array()){
+		protected function redirect($url, $params = array()){
 			$redirects = $this->getRedirectCount();
 
 			// Check if too many redirects have occurred
@@ -95,6 +95,10 @@
 				if($this->redirectProtectionMethod == BouncerProtectionMethod::Session){
 					$_SESSION[$this->redirectProtectionVar] = 0;
 				}
+				/** @TODO: This error message is ugly when printed to the screen. Let's add the ability to grab
+				 *  the contents of a static html file and output that instead of an ugly error.
+				 *
+				 */
 				die("Severe Error: Misconfigured roles - Maximum number of redirects reached\n");
 			}
 
