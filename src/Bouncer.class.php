@@ -113,6 +113,7 @@
 
 			$query_string   = http_build_query($params);
 			$locationString = "Location: ".$url.(!empty($query_string) ? ('?'.$query_string) : '');
+
 			header($locationString);
 			exit(); // Probably also want to kill the script here
 		}
@@ -120,7 +121,7 @@
 		/**
 		 * @return int
 		 */
-		private function getRedirectCount(){
+		protected function getRedirectCount(){
 			if($this->redirectProtectionMethod == BouncerProtectionMethod::None){
 				return 0; // Redirect protection is off, always return 0.
 			}
