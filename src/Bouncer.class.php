@@ -28,15 +28,19 @@
 	 *
 	 *
 	 */
-	class Bouncer{
+	class Bouncer
+	{
 		/**
 		 * @var $roles BouncerRole[]
 		 */
 		protected $roles;
+
 		/** @var $redirectProtectionMethod int */
 		protected $redirectProtectionMethod;
+
 		/** @var $redirectProtectionVar String */
 		protected $redirectProtectionVar;
+
 		/** @var $maxRedirectsBeforeProtection int */
 		protected $maxRedirectsBeforeProtection;
 
@@ -59,16 +63,19 @@
 		public function verifyAccess($roleList, $url){
 			$granted = false;
 			foreach($roleList as $role){
-				$obj = $this->roles[$role];
-				/** @var $obj BouncerRole */
-				$response = $obj->verifyAccess($url);
-				if($response->getIsOverridden()){ // If access to the page is overridden return false
-					return false; // because any override is sufficient to remove permission.
-				}
-				if($response->getIsAccessible()){ // If this particular role contains access to the page set granted to true
-					$granted = true; // We don't return yet in case another role overrides.
+				if(array_key_exists($role, $this->roles)){
+					$obj = $this->roles[$role];
+					/** @var $obj BouncerRole */
+					$response = $obj->verifyAccess($url);
+					if($response->getIsOverridden()){ // If access to the page is overridden return false
+						return false; // because any override is sufficient to remove permission.
+					}
+					if($response->getIsAccessible()){ // If this particular role contains access to the page set granted to true
+						$granted = true; // We don't return yet in case another role overrides.
+					}
 				}
 			}
+
 			return $granted;
 		}
 
@@ -77,11 +84,10 @@
 		 * @param array  $pages
 		 * @param array  $replaces
 		 */
-		public function addRole($name, $pages, $replaces = null){
+		public function addRole($name, $pages, $replaces = NULL){
 			$role               = new BouncerRole($name, $pages, $replaces);
 			$this->roles[$name] = $role;
 		}
-
 
 		/**
 		 * @param string $url
@@ -96,7 +102,7 @@
 					$_SESSION[$this->redirectProtectionVar] = 0;
 				}
 				/** @TODO: This error message is ugly when printed to the screen. Let's add the ability to grab
-				 *  the contents of a static html file and output that instead of an ugly error.
+				 *       the contents of a static html file and output that instead of an ugly error.
 				 *
 				 */
 				die("Severe Error: Misconfigured roles - Maximum number of redirects reached\n");
@@ -129,12 +135,14 @@
 				if(!isset($_SESSION[$this->redirectProtectionVar])){
 					$_SESSION[$this->redirectProtectionVar] = 0;
 				}
+
 				return $_SESSION[$this->redirectProtectionVar];
 			}
 			else{
 				if(!isset($_GET[$this->redirectProtectionVar])){
 					return 0;
 				}
+
 				return $_GET[$this->redirectProtectionVar];
 			}
 		}
@@ -259,9 +267,9 @@
 				// The query failed, Throw an error and let the programmer handle it however they want.
 				throw new ErrorException("An error has occurred while attempting to fetch your roles.");
 			}
+
 			return true;
 		}
-
 
 		/**
 		 * @throws Exception
@@ -283,16 +291,20 @@
 		public function setRedirectProtectionMethod($redirectProtectionMethod){
 			if($redirectProtectionMethod == BouncerProtectionMethod::Session){
 				$this->redirectProtectionMethod = BouncerProtectionMethod::Session;
+
 				return true;
 			}
 			if($redirectProtectionMethod == BouncerProtectionMethod::Get){
 				$this->redirectProtectionMethod = BouncerProtectionMethod::Get;
+
 				return true;
 			}
 			if($redirectProtectionMethod == BouncerProtectionMethod::None){
 				$this->redirectProtectionMethod = BouncerProtectionMethod::None;
+
 				return true;
 			}
+
 			return false;
 		}
 
